@@ -1,6 +1,5 @@
 package com.tickshow.backend.auth;
 
-import com.tickshow.backend.model.entity.User;
 import com.tickshow.backend.model.entity.UserAuthentication;
 import com.tickshow.backend.repository.AuthRepository;
 import org.slf4j.Logger;
