@@ -1,10 +1,15 @@
 package com.tickshow.backend.controller;
 
+import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.exception.RegisterException;
+import com.tickshow.backend.exception.UserLoginException;
 import com.tickshow.backend.repository.AuthRepository;
 import com.tickshow.backend.repository.UserRepository;
+import com.tickshow.backend.request.LoginRequest;
 import com.tickshow.backend.request.SignUpRequest;
 import com.tickshow.backend.response.ApiResponse;
+import com.tickshow.backend.response.AuthenticationResponse;
+import com.tickshow.backend.usecase.LoginUseCase;
 import com.tickshow.backend.usecase.RegisterUseCase;
 import com.tickshow.backend.utils.JwtUtil;
 import org.slf4j.Logger;
@@ -64,6 +69,27 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to register user, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            LoginUseCase useCase = new LoginUseCase(
+                    authRepository,
+                    userRepository,
+                    jwtUtil,
+                    authenticationManager,
+                    request
+            );
+            AuthenticationResponse response = useCase.execute(expiration);
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException | UserLoginException e) {
+            log.error("Unable to login, incorrect email or password, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to login, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
