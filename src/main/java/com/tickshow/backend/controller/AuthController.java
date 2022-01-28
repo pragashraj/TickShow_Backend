@@ -25,7 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth/")
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
@@ -52,7 +52,7 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("sign-up")
     public ResponseEntity<?> register(@RequestBody SignUpRequest request) {
         try {
             RegisterUseCase useCase = new RegisterUseCase(
@@ -73,7 +73,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping("sign-in")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
             LoginUseCase useCase = new LoginUseCase(

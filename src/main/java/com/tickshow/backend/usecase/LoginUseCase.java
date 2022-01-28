@@ -32,8 +32,8 @@ public class LoginUseCase {
         User user = userRepository.findByEmail(request.getEmail());
 
         if (user == null) {
-            log.error("Account not found with email: {}", request.getEmail());
-            throw new EntityNotFoundException("Account not found with this email");
+            log.error("Account not found for email: {}", request.getEmail());
+            throw new EntityNotFoundException("Account not found for email " + request.getEmail());
         }
 
         String email = user.getEmail();
