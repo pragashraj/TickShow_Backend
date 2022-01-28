@@ -28,13 +28,10 @@ public class Movie {
 
     private LocalDate releaseDate;
 
-    private Double imdb;
+    private String experience;
 
-    private Double rotten;
-
-    private Double userRate;
-
-    private int noOfRaters;
+    @OneToOne
+    private Rate rate;
 
     @ManyToMany
     private List<Genre> genres;
