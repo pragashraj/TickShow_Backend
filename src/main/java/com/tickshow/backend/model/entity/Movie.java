@@ -44,4 +44,7 @@ public class Movie {
 
     @OneToMany
     private List<Crew> crews;
+
+    @OneToOne
+    private MovieShowType movieShowType;
 }
