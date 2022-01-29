@@ -14,7 +14,7 @@
     <name>tickShow</name>
     <description>Spring Boot backend for tick_show website</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>10</java.version>
     </properties>
     <dependencies>
         <dependency>
