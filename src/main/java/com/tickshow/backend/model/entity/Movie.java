@@ -30,6 +30,8 @@ public class Movie {
 
     private String experience;
 
+    private String language;
+
     @OneToOne
     private Rate rate;
 
