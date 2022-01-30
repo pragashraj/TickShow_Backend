@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface GenreRepository extends JpaRepository<Genre, Long> {
     List<Genre> findAllByGenreIn(List<String> genres);
+
+    Genre findByGenre(String genre);
 }
