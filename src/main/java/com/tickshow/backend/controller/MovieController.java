@@ -6,6 +6,7 @@ import com.tickshow.backend.repository.GenreRepository;
 import com.tickshow.backend.repository.MovieRepository;
 import com.tickshow.backend.repository.MovieShowTypeRepository;
 import com.tickshow.backend.request.FilterMoviesRequest;
+import com.tickshow.backend.request.SortMoviesRequest;
 import com.tickshow.backend.usecase.FilterMoviesUseCase;
 import com.tickshow.backend.usecase.GetMoviesUseCase;
 import com.tickshow.backend.usecase.SearchMovieUseCase;
@@ -38,11 +39,11 @@ public class MovieController {
         this.movieShowTypeRepository = movieShowTypeRepository;
     }
 
-    @GetMapping("get-movies/{page}")
-    public ResponseEntity<?> getMovies(@PathVariable int page) {
+    @GetMapping("get-movies")
+    public ResponseEntity<?> getMovies(@RequestParam int page, @RequestParam int size) {
         try {
             GetMoviesUseCase useCase = new GetMoviesUseCase(movieRepository);
-            PageableCoreMovie pageableCoreMovie = useCase.execute(page);
+            PageableCoreMovie pageableCoreMovie = useCase.execute(page, size);
             return ResponseEntity.ok(pageableCoreMovie);
         } catch (Exception e) {
             log.error("Unable to get movies, cause: {}", e.getMessage());
@@ -66,14 +67,15 @@ public class MovieController {
         }
     }
 
-    @GetMapping("sort-movies")
-    public ResponseEntity<?> sortMovies(@RequestParam String sortBy, @RequestParam int page) {
+    @PostMapping("sort-movies")
+    public ResponseEntity<?> sortMovies(@RequestBody SortMoviesRequest request) {
         try {
             SortMoviesUseCase useCase = new SortMoviesUseCase(
                     movieRepository,
-                    movieShowTypeRepository
+                    movieShowTypeRepository,
+                    request
             );
-            PageableCoreMovie pageableCoreMovie = useCase.execute(sortBy, page);
+            PageableCoreMovie pageableCoreMovie = useCase.execute();
             return ResponseEntity.ok(pageableCoreMovie);
         } catch (EntityNotFoundException e) {
             log.error("Unable to filter movies, cause: {}", e.getMessage());

@@ -7,6 +7,7 @@ import com.tickshow.backend.model.entity.MovieShowType;
 import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
 import com.tickshow.backend.repository.MovieRepository;
 import com.tickshow.backend.repository.MovieShowTypeRepository;
+import com.tickshow.backend.request.SortMoviesRequest;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +22,20 @@ public class SortMoviesUseCase {
 
     private final MovieRepository movieRepository;
     private final MovieShowTypeRepository movieShowTypeRepository;
+    private final SortMoviesRequest request;
 
-    public PageableCoreMovie execute(String sortBy, int page) throws EntityNotFoundException {
-        MovieShowType movieShowType = movieShowTypeRepository.findByType(sortBy);
+    public PageableCoreMovie execute() throws EntityNotFoundException {
+        MovieShowType movieShowType = movieShowTypeRepository.findByType(request.getSortBy());
 
         if (movieShowType == null) {
-            log.error("Show type not found for : {}", sortBy);
+            log.error("Show type not found for : {}", request.getSortBy());
             throw new EntityNotFoundException("Show type not found");
         }
 
-        Page<Movie> moviePage = movieRepository.findAllByMovieShowType(movieShowType, PageRequest.of(page, 10));
+        Page<Movie> moviePage = movieRepository.findAllByMovieShowType(movieShowType, PageRequest.of(
+                request.getPage(),
+                request.getSize()
+        ));
 
         return new PageableCoreMovie(
                 moviePage.get()

@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public class GetMoviesUseCase {
     private final MovieRepository movieRepository;
 
-    public PageableCoreMovie execute(int page) {
-        Page<Movie> moviePage = movieRepository.findAll(PageRequest.of(page, 10));
+    public PageableCoreMovie execute(int page, int size) {
+        Page<Movie> moviePage = movieRepository.findAll(PageRequest.of(page, size));
 
         return new PageableCoreMovie(
                 moviePage.get()
