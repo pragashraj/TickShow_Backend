@@ -49,7 +49,7 @@ public class CreateNewMovieUseCase {
 
         movieRepository.save(movie);
 
-        return "New movie item create successfully";
+        return "New movie created successfully";
     }
 
     private Rate createRating() {
