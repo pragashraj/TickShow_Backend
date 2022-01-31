@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface TheatreRepository extends JpaRepository<Theatre, Long> {
-    @Query("select t.name from Theatre t where t.location =? 1")
+    @Query(value = "select t.name from Theatre t where t.location =? 1", nativeQuery = true)
     List<String> findAllTheatreNamesByLocation(Location location);
 }
