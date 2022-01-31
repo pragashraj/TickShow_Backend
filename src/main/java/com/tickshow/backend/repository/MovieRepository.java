@@ -20,5 +20,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     Page<Movie> findAllByNameLike(String name, Pageable pageable);
 
-    Page<Movie> findAllByNameLikeAndExperience(String name, String exp);
+    List<Movie> findAllByNameInAndExperience(List<String> names, String experience);
 }

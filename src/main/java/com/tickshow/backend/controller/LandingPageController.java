@@ -1,7 +1,7 @@
 package com.tickshow.backend.controller;
 
 import com.tickshow.backend.exception.EntityNotFoundException;
-import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
+import com.tickshow.backend.model.entity.Movie;
 import com.tickshow.backend.repository.*;
 import com.tickshow.backend.request.SearchMovieByNameAndTheatreRequest;
 import com.tickshow.backend.response.GetLandingPageContentsResponse;
@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/landingPage/")
@@ -26,6 +28,7 @@ public class LandingPageController {
     private final EventRepository eventRepository;
     private final MovieShowTypeRepository movieShowTypeRepository;
     private final LocationRepository locationRepository;
+    private final ShowTimeRepository showTimeRepository;
 
 
     @Autowired
@@ -33,13 +36,15 @@ public class LandingPageController {
                                  TheatreRepository theatreRepository,
                                  EventRepository eventRepository,
                                  MovieShowTypeRepository movieShowTypeRepository,
-                                 LocationRepository locationRepository
+                                 LocationRepository locationRepository,
+                                 ShowTimeRepository showTimeRepository
     ) {
         this.movieRepository = movieRepository;
         this.theatreRepository = theatreRepository;
         this.eventRepository = eventRepository;
         this.movieShowTypeRepository = movieShowTypeRepository;
         this.locationRepository = locationRepository;
+        this.showTimeRepository = showTimeRepository;
     }
 
     @GetMapping("get-landingPage-contents")
@@ -66,10 +71,12 @@ public class LandingPageController {
             SearchMovieByNameAndTheatreUseCase useCase = new SearchMovieByNameAndTheatreUseCase(
                     movieRepository,
                     locationRepository,
+                    theatreRepository,
+                    showTimeRepository,
                     request
             );
-            PageableCoreMovie pageableCoreMovie = useCase.execute();
-            return ResponseEntity.ok(pageableCoreMovie);
+            List<Movie> movies = useCase.execute();
+            return ResponseEntity.ok(movies);
         } catch (EntityNotFoundException e) {
             log.error("Unable to search movie, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
