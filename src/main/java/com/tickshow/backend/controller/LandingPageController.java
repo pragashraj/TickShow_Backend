@@ -1,17 +1,18 @@
 package com.tickshow.backend.controller;
 
+import com.tickshow.backend.exception.EntityNotFoundException;
+import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
 import com.tickshow.backend.repository.*;
+import com.tickshow.backend.request.SearchMovieByNameAndTheatreRequest;
 import com.tickshow.backend.response.GetLandingPageContentsResponse;
 import com.tickshow.backend.usecase.GetLandingPageContentsUseCase;
+import com.tickshow.backend.usecase.SearchMovieByNameAndTheatreUseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -55,6 +56,25 @@ public class LandingPageController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Unable to get contents, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("search-movie")
+    public ResponseEntity<?> searchMovie(@RequestBody SearchMovieByNameAndTheatreRequest request) {
+        try {
+            SearchMovieByNameAndTheatreUseCase useCase = new SearchMovieByNameAndTheatreUseCase(
+                    movieRepository,
+                    locationRepository,
+                    request
+            );
+            PageableCoreMovie pageableCoreMovie = useCase.execute();
+            return ResponseEntity.ok(pageableCoreMovie);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to search movie, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to search movie, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
