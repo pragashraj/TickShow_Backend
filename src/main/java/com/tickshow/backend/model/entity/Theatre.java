@@ -25,4 +25,7 @@ public class Theatre {
 
     @OneToOne
     private Rate rate;
+
+    @OneToOne
+    private Location location;
 }
