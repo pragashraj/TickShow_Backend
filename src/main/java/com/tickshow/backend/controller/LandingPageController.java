@@ -1,12 +1,15 @@
 package com.tickshow.backend.controller;
 
+import com.tickshow.backend.exception.AlreadyExistException;
 import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.model.entity.Movie;
 import com.tickshow.backend.repository.*;
 import com.tickshow.backend.request.SearchMovieByNameAndTheatreRequest;
+import com.tickshow.backend.response.ApiResponse;
 import com.tickshow.backend.response.GetLandingPageContentsResponse;
 import com.tickshow.backend.usecase.GetLandingPageContentsUseCase;
 import com.tickshow.backend.usecase.SearchMovieByNameAndTheatreUseCase;
+import com.tickshow.backend.usecase.SubscribeToNewsletterUseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,7 @@ public class LandingPageController {
     private final MovieShowTypeRepository movieShowTypeRepository;
     private final LocationRepository locationRepository;
     private final ShowTimeRepository showTimeRepository;
+    private final SubscriberRepository subscriberRepository;
 
 
     @Autowired
@@ -37,7 +41,8 @@ public class LandingPageController {
                                  EventRepository eventRepository,
                                  MovieShowTypeRepository movieShowTypeRepository,
                                  LocationRepository locationRepository,
-                                 ShowTimeRepository showTimeRepository
+                                 ShowTimeRepository showTimeRepository,
+                                 SubscriberRepository subscriberRepository
     ) {
         this.movieRepository = movieRepository;
         this.theatreRepository = theatreRepository;
@@ -45,6 +50,7 @@ public class LandingPageController {
         this.movieShowTypeRepository = movieShowTypeRepository;
         this.locationRepository = locationRepository;
         this.showTimeRepository = showTimeRepository;
+        this.subscriberRepository = subscriberRepository;
     }
 
     @GetMapping("get-landingPage-contents")
@@ -82,6 +88,22 @@ public class LandingPageController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to search movie, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("subscribe-newsletter/{email}")
+    public ResponseEntity<?> subscribeToNewsletter(@PathVariable String email) {
+        try {
+            SubscribeToNewsletterUseCase useCase = new SubscribeToNewsletterUseCase(subscriberRepository);
+            String response = useCase.execute(email);
+            ApiResponse apiResponse = new ApiResponse(true, response);
+            return ResponseEntity.ok(apiResponse);
+        } catch (AlreadyExistException e) {
+            log.error("Unable to subscribe, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to subscribe, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
