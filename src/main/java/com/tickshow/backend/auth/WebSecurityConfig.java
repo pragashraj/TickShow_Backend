@@ -60,8 +60,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(
                         "/api/auth/**",
+                        "/api/landingPage/**",
                         "/api/movies/**",
-                        "/api/landingPage/**"
+                        "/api/theatres/**",
+                        "/api/events/**"
                 ).permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
