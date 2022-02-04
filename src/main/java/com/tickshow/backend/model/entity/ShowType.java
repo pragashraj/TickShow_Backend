@@ -15,7 +15,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Entity
 @Builder
-public class MovieShowType {
+public class ShowType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

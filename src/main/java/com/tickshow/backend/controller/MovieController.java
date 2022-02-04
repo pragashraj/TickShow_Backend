@@ -24,7 +24,7 @@ public class MovieController {
 
     private final MovieRepository movieRepository;
     private final GenreRepository genreRepository;
-    private final MovieShowTypeRepository movieShowTypeRepository;
+    private final ShowTypeRepository showTypeRepository;
     private final RateRepository rateRepository;
     private final CastRepository castRepository;
     private final CrewRepository crewRepository;
@@ -32,14 +32,14 @@ public class MovieController {
     @Autowired
     public MovieController(MovieRepository movieRepository,
                            GenreRepository genreRepository,
-                           MovieShowTypeRepository movieShowTypeRepository,
+                           ShowTypeRepository showTypeRepository,
                            RateRepository rateRepository,
                            CastRepository castRepository,
                            CrewRepository crewRepository
     ) {
         this.movieRepository = movieRepository;
         this.genreRepository = genreRepository;
-        this.movieShowTypeRepository = movieShowTypeRepository;
+        this.showTypeRepository = showTypeRepository;
         this.rateRepository = rateRepository;
         this.castRepository = castRepository;
         this.crewRepository = crewRepository;
@@ -78,7 +78,7 @@ public class MovieController {
         try {
             SortMoviesUseCase useCase = new SortMoviesUseCase(
                     movieRepository,
-                    movieShowTypeRepository,
+                    showTypeRepository,
                     request
             );
             PageableCoreMovie pageableCoreMovie = useCase.execute();
@@ -113,7 +113,7 @@ public class MovieController {
                     genreRepository,
                     castRepository,
                     crewRepository,
-                    movieShowTypeRepository,
+                    showTypeRepository,
                     request
             );
             String response = useCase.execute();

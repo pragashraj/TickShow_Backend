@@ -3,10 +3,10 @@ package com.tickshow.backend.usecase;
 import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.model.coreEntity.CoreMovie;
 import com.tickshow.backend.model.entity.Movie;
-import com.tickshow.backend.model.entity.MovieShowType;
+import com.tickshow.backend.model.entity.ShowType;
 import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
 import com.tickshow.backend.repository.MovieRepository;
-import com.tickshow.backend.repository.MovieShowTypeRepository;
+import com.tickshow.backend.repository.ShowTypeRepository;
 import com.tickshow.backend.request.SortMoviesRequest;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -21,18 +21,18 @@ public class SortMoviesUseCase {
     private static final Logger log = LoggerFactory.getLogger(SortMoviesUseCase.class);
 
     private final MovieRepository movieRepository;
-    private final MovieShowTypeRepository movieShowTypeRepository;
+    private final ShowTypeRepository showTypeRepository;
     private final SortMoviesRequest request;
 
     public PageableCoreMovie execute() throws EntityNotFoundException {
-        MovieShowType movieShowType = movieShowTypeRepository.findByType(request.getSortBy());
+        ShowType showType = showTypeRepository.findByType(request.getSortBy());
 
-        if (movieShowType == null) {
+        if (showType == null) {
             log.error("Show type not found for : {}", request.getSortBy());
             throw new EntityNotFoundException("Show type not found");
         }
 
-        Page<Movie> moviePage = movieRepository.findAllByMovieShowType(movieShowType, PageRequest.of(
+        Page<Movie> moviePage = movieRepository.findAllByMovieShowType(showType, PageRequest.of(
                 request.getPage(),
                 request.getSize()
         ));
@@ -58,7 +58,7 @@ public class SortMoviesUseCase {
                 movie.getGenres(),
                 movie.getCasts(),
                 movie.getCrews(),
-                movie.getMovieShowType()
+                movie.getShowType()
         );
     }
 }

@@ -25,16 +25,16 @@ public class GetLandingPageContentsUseCase {
     private final MovieRepository movieRepository;
     private final TheatreRepository theatreRepository;
     private final EventRepository eventRepository;
-    private final MovieShowTypeRepository movieShowTypeRepository;
+    private final ShowTypeRepository showTypeRepository;
     private final LocationRepository locationRepository;
 
     public GetLandingPageContentsResponse execute() {
         Pageable pageable = PageRequest.of(1, 4);
 
-        MovieShowType movieShowType = movieShowTypeRepository.findByType("Upcoming Movies");
+        ShowType showType = showTypeRepository.findByType("Upcoming Movies");
 
         Page<Movie> moviePage = movieRepository.findAll(pageable);
-        Page<Movie> upcomingMoviePage = movieRepository.findAllByMovieShowType(movieShowType, pageable);
+        Page<Movie> upcomingMoviePage = movieRepository.findAllByMovieShowType(showType, pageable);
         Page<Theatre> theatrePage = theatreRepository.findAll(pageable);
         Page<Event> eventPage = eventRepository.findAll(pageable);
 
@@ -91,7 +91,7 @@ public class GetLandingPageContentsUseCase {
                 movie.getGenres(),
                 movie.getCasts(),
                 movie.getCrews(),
-                movie.getMovieShowType()
+                movie.getShowType()
         );
     }
 

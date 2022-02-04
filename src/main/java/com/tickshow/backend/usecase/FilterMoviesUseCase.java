@@ -50,7 +50,7 @@ public class FilterMoviesUseCase {
                 movie.getGenres(),
                 movie.getCasts(),
                 movie.getCrews(),
-                movie.getMovieShowType()
+                movie.getShowType()
         );
     }
 }

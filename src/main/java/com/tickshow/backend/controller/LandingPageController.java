@@ -29,7 +29,7 @@ public class LandingPageController {
     private final MovieRepository movieRepository;
     private final TheatreRepository theatreRepository;
     private final EventRepository eventRepository;
-    private final MovieShowTypeRepository movieShowTypeRepository;
+    private final ShowTypeRepository showTypeRepository;
     private final LocationRepository locationRepository;
     private final ShowTimeRepository showTimeRepository;
     private final SubscriberRepository subscriberRepository;
@@ -39,7 +39,7 @@ public class LandingPageController {
     public LandingPageController(MovieRepository movieRepository,
                                  TheatreRepository theatreRepository,
                                  EventRepository eventRepository,
-                                 MovieShowTypeRepository movieShowTypeRepository,
+                                 ShowTypeRepository showTypeRepository,
                                  LocationRepository locationRepository,
                                  ShowTimeRepository showTimeRepository,
                                  SubscriberRepository subscriberRepository
@@ -47,7 +47,7 @@ public class LandingPageController {
         this.movieRepository = movieRepository;
         this.theatreRepository = theatreRepository;
         this.eventRepository = eventRepository;
-        this.movieShowTypeRepository = movieShowTypeRepository;
+        this.showTypeRepository = showTypeRepository;
         this.locationRepository = locationRepository;
         this.showTimeRepository = showTimeRepository;
         this.subscriberRepository = subscriberRepository;
@@ -60,7 +60,7 @@ public class LandingPageController {
                     movieRepository,
                     theatreRepository,
                     eventRepository,
-                    movieShowTypeRepository,
+                    showTypeRepository,
                     locationRepository
             );
             GetLandingPageContentsResponse response = useCase.execute();

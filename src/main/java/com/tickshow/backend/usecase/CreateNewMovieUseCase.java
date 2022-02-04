@@ -23,7 +23,7 @@ public class CreateNewMovieUseCase {
     private final GenreRepository genreRepository;
     private final CastRepository castRepository;
     private final CrewRepository crewRepository;
-    private final MovieShowTypeRepository movieShowTypeRepository;
+    private final ShowTypeRepository showTypeRepository;
     private final CreateNewMovieRequest request;
 
     public String execute() throws EntityNotFoundException {
@@ -31,7 +31,7 @@ public class CreateNewMovieUseCase {
         List<Genre> genres = getGenres();
         List<Cast> casts = createCasts();
         List<Crew> crews = createCrews();
-        MovieShowType movieShowType = getMovieShowType();
+        ShowType showType = getMovieShowType();
 
         Movie movie = Movie.builder()
                 .name(request.getName())
@@ -44,7 +44,7 @@ public class CreateNewMovieUseCase {
                 .genres(genres)
                 .casts(casts)
                 .crews(crews)
-                .movieShowType(movieShowType)
+                .showType(showType)
                 .build();
 
         movieRepository.save(movie);
@@ -114,14 +114,14 @@ public class CreateNewMovieUseCase {
         return genres;
     }
 
-    private MovieShowType getMovieShowType() throws EntityNotFoundException {
-        MovieShowType movieShowType = movieShowTypeRepository.findByType(request.getMovieShowType());
+    private ShowType getMovieShowType() throws EntityNotFoundException {
+        ShowType showType = showTypeRepository.findByType(request.getMovieShowType());
 
-        if (movieShowType == null) {
+        if (showType == null) {
             log.error("Show type not found");
             throw new EntityNotFoundException("Show type not found");
         }
 
-        return movieShowType;
+        return showType;
     }
 }

@@ -3,9 +3,12 @@ package com.tickshow.backend.controller;
 import com.tickshow.backend.model.pageableEntity.PageableCoreEvent;
 import com.tickshow.backend.repository.EventCategoryRepository;
 import com.tickshow.backend.repository.EventRepository;
+import com.tickshow.backend.repository.ShowTypeRepository;
 import com.tickshow.backend.request.FilterEventsRequest;
+import com.tickshow.backend.request.SortEventsRequest;
 import com.tickshow.backend.usecase.FilterEventsUseCase;
 import com.tickshow.backend.usecase.GetEventsUseCase;
+import com.tickshow.backend.usecase.SortEventsUseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +25,16 @@ public class EventController {
 
     private final EventRepository eventRepository;
     private final EventCategoryRepository eventCategoryRepository;
+    private final ShowTypeRepository showTypeRepository;
 
     @Autowired
-    public EventController(EventRepository eventRepository, EventCategoryRepository eventCategoryRepository) {
+    public EventController(EventRepository eventRepository,
+                           EventCategoryRepository eventCategoryRepository,
+                           ShowTypeRepository showTypeRepository
+    ) {
         this.eventRepository = eventRepository;
         this.eventCategoryRepository = eventCategoryRepository;
+        this.showTypeRepository = showTypeRepository;
     }
 
     @GetMapping("get-events")
@@ -53,6 +61,22 @@ public class EventController {
             return ResponseEntity.ok(pageableCoreEvent);
         } catch (Exception e) {
             log.error("Unable to filter events, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("sort-events")
+    public ResponseEntity<?> sortEvents(@RequestBody SortEventsRequest request) {
+        try {
+            SortEventsUseCase useCase = new SortEventsUseCase(
+                    eventRepository,
+                    showTypeRepository,
+                    request
+            );
+            PageableCoreEvent pageableCoreEvent = useCase.execute();
+            return ResponseEntity.ok(pageableCoreEvent);
+        } catch (Exception e) {
+            log.error("Unable to sort events, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }

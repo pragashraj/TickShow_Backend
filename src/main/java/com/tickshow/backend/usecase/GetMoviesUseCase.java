@@ -38,7 +38,7 @@ public class GetMoviesUseCase {
                 movie.getGenres(),
                 movie.getCasts(),
                 movie.getCrews(),
-                movie.getMovieShowType()
+                movie.getShowType()
         );
     }
 }

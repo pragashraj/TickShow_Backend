@@ -31,4 +31,7 @@ public class Event {
 
     @OneToOne
     private EventCategory eventCategory;
+
+    @OneToOne
+    private ShowType showType;
 }

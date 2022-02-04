@@ -24,5 +24,5 @@ public class CoreMovie {
     private List<Genre> genres;
     private List<Cast> casts;
     private List<Crew> crews;
-    private MovieShowType movieShowType;
+    private ShowType showType;
 }
