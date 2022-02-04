@@ -28,4 +28,7 @@ public class Event {
 
     @OneToOne
     private Location location;
+
+    @OneToOne
+    private EventCategory eventCategory;
 }
