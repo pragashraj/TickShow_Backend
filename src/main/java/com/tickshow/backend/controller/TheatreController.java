@@ -3,8 +3,12 @@ package com.tickshow.backend.controller;
 import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.model.pageableEntity.PageableCoreTheatre;
 import com.tickshow.backend.repository.LocationRepository;
+import com.tickshow.backend.repository.RateRepository;
 import com.tickshow.backend.repository.TheatreRepository;
+import com.tickshow.backend.request.CreateNewTheatreRequest;
 import com.tickshow.backend.request.SortTheatresRequest;
+import com.tickshow.backend.response.ApiResponse;
+import com.tickshow.backend.usecase.CreateNewTheatreUseCase;
 import com.tickshow.backend.usecase.GetTheatresUseCase;
 import com.tickshow.backend.usecase.SortTheatresUseCase;
 import org.slf4j.Logger;
@@ -23,13 +27,16 @@ public class TheatreController {
 
     private final TheatreRepository theatreRepository;
     private final LocationRepository locationRepository;
+    private final RateRepository rateRepository;
 
     @Autowired
     public TheatreController(TheatreRepository theatreRepository,
-                             LocationRepository locationRepository
+                             LocationRepository locationRepository,
+                             RateRepository rateRepository
     ) {
         this.theatreRepository = theatreRepository;
         this.locationRepository = locationRepository;
+        this.rateRepository = rateRepository;
     }
 
     @GetMapping("get-theatres")
@@ -59,6 +66,27 @@ public class TheatreController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to sort theatres, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("create-theatre")
+    public ResponseEntity<?> createTheatre(@RequestBody CreateNewTheatreRequest request) {
+        try {
+            CreateNewTheatreUseCase useCase = new CreateNewTheatreUseCase(
+                    theatreRepository,
+                    locationRepository,
+                    rateRepository,
+                    request
+            );
+            String response = useCase.execute();
+            ApiResponse apiResponse = new ApiResponse(true, response);
+            return ResponseEntity.ok(apiResponse);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to create a new theatre, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to create a new theatre, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
