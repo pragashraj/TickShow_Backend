@@ -29,7 +29,7 @@ public class GetLandingPageContentsUseCase {
     private final LocationRepository locationRepository;
 
     public GetLandingPageContentsResponse execute() {
-        Pageable pageable = PageRequest.of(1, 4);
+        Pageable pageable = PageRequest.of(0, 4);
 
         ShowType showType = showTypeRepository.findByType("Upcoming Movies");
 
