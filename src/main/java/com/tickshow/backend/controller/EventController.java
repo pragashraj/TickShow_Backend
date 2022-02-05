@@ -1,11 +1,16 @@
 package com.tickshow.backend.controller;
 
+import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.model.pageableEntity.PageableCoreEvent;
 import com.tickshow.backend.repository.EventCategoryRepository;
 import com.tickshow.backend.repository.EventRepository;
+import com.tickshow.backend.repository.LocationRepository;
 import com.tickshow.backend.repository.ShowTypeRepository;
+import com.tickshow.backend.request.CreateNewEventRequest;
 import com.tickshow.backend.request.FilterEventsRequest;
 import com.tickshow.backend.request.SortEventsRequest;
+import com.tickshow.backend.response.ApiResponse;
+import com.tickshow.backend.usecase.CreateNewEventUseCase;
 import com.tickshow.backend.usecase.FilterEventsUseCase;
 import com.tickshow.backend.usecase.GetEventsUseCase;
 import com.tickshow.backend.usecase.SortEventsUseCase;
@@ -26,15 +31,18 @@ public class EventController {
     private final EventRepository eventRepository;
     private final EventCategoryRepository eventCategoryRepository;
     private final ShowTypeRepository showTypeRepository;
+    private final LocationRepository locationRepository;
 
     @Autowired
     public EventController(EventRepository eventRepository,
                            EventCategoryRepository eventCategoryRepository,
-                           ShowTypeRepository showTypeRepository
+                           ShowTypeRepository showTypeRepository,
+                           LocationRepository locationRepository
     ) {
         this.eventRepository = eventRepository;
         this.eventCategoryRepository = eventCategoryRepository;
         this.showTypeRepository = showTypeRepository;
+        this.locationRepository = locationRepository;
     }
 
     @GetMapping("get-events")
@@ -77,6 +85,28 @@ public class EventController {
             return ResponseEntity.ok(pageableCoreEvent);
         } catch (Exception e) {
             log.error("Unable to sort events, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("create-event")
+    public ResponseEntity<?> createEvent(@RequestBody CreateNewEventRequest request) {
+        try {
+            CreateNewEventUseCase useCase = new CreateNewEventUseCase(
+                    eventRepository,
+                    locationRepository,
+                    eventCategoryRepository,
+                    showTypeRepository,
+                    request
+            );
+            String response = useCase.execute();
+            ApiResponse apiResponse = new ApiResponse(true, response);
+            return ResponseEntity.ok(apiResponse);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to create a new event, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to create a new event, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
