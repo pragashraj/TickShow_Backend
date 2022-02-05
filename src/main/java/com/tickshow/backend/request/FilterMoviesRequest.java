@@ -15,4 +15,5 @@ public class FilterMoviesRequest {
     private List<String> experiences = new ArrayList<>();
     private List<String> genres = new ArrayList<>();
     private int page;
+    private int size;
 }

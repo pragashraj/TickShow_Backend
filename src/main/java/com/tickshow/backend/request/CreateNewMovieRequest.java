@@ -25,5 +25,5 @@ public class CreateNewMovieRequest {
     private List<CoreGenre> genres;
     private List<CoreCast> casts;
     private List<CoreCrew> crews;
-    private String movieShowType;
+    private String showType;
 }

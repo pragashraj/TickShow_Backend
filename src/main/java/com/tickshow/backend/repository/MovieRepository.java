@@ -16,7 +16,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             List<String> languages, List<String> experiences, List<Genre> genres, Pageable pageable
     );
 
-    Page<Movie> findAllByMovieShowType(ShowType showType, Pageable pageable);
+    Page<Movie> findAllByShowType(ShowType showType, Pageable pageable);
 
     Page<Movie> findAllByNameLike(String name, Pageable pageable);
 

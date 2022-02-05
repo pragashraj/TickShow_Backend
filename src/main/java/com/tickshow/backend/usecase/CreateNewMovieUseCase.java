@@ -31,7 +31,7 @@ public class CreateNewMovieUseCase {
         List<Genre> genres = getGenres();
         List<Cast> casts = createCasts();
         List<Crew> crews = createCrews();
-        ShowType showType = getMovieShowType();
+        ShowType showType = getShowType();
 
         Movie movie = Movie.builder()
                 .name(request.getName())
@@ -114,8 +114,8 @@ public class CreateNewMovieUseCase {
         return genres;
     }
 
-    private ShowType getMovieShowType() throws EntityNotFoundException {
-        ShowType showType = showTypeRepository.findByType(request.getMovieShowType());
+    private ShowType getShowType() throws EntityNotFoundException {
+        ShowType showType = showTypeRepository.findByType(request.getShowType());
 
         if (showType == null) {
             log.error("Show type not found");

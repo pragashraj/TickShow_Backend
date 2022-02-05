@@ -32,7 +32,7 @@ public class SortMoviesUseCase {
             throw new EntityNotFoundException("Show type not found");
         }
 
-        Page<Movie> moviePage = movieRepository.findAllByMovieShowType(showType, PageRequest.of(
+        Page<Movie> moviePage = movieRepository.findAllByShowType(showType, PageRequest.of(
                 request.getPage(),
                 request.getSize()
         ));

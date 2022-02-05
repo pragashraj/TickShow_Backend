@@ -26,7 +26,7 @@ public class FilterMoviesUseCase {
                 request.getLanguages(),
                 request.getExperiences(),
                 genres,
-                PageRequest.of(request.getPage(), 10)
+                PageRequest.of(request.getPage(), request.getSize())
         );
 
         return new PageableCoreMovie(

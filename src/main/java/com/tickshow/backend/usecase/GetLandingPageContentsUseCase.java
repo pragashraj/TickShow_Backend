@@ -34,7 +34,7 @@ public class GetLandingPageContentsUseCase {
         ShowType showType = showTypeRepository.findByType("Upcoming Movies");
 
         Page<Movie> moviePage = movieRepository.findAll(pageable);
-        Page<Movie> upcomingMoviePage = movieRepository.findAllByMovieShowType(showType, pageable);
+        Page<Movie> upcomingMoviePage = movieRepository.findAllByShowType(showType, pageable);
         Page<Theatre> theatrePage = theatreRepository.findAll(pageable);
         Page<Event> eventPage = eventRepository.findAll(pageable);
 
