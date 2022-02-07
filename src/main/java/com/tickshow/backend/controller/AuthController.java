@@ -9,10 +9,7 @@ import com.tickshow.backend.response.ApiResponse;
 import com.tickshow.backend.response.AuthenticationResponse;
 import com.tickshow.backend.transport.EmailService;
 import com.tickshow.backend.transport.templates.PasswordResetTemplate;
-import com.tickshow.backend.usecase.ConfirmResetCodeUseCase;
-import com.tickshow.backend.usecase.LoginUseCase;
-import com.tickshow.backend.usecase.RegisterUseCase;
-import com.tickshow.backend.usecase.SendPasswordResetCodeUseCase;
+import com.tickshow.backend.usecase.*;
 import com.tickshow.backend.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,6 +131,25 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to confirm reset code, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("change-password")
+    public ResponseEntity<?> changePassword(@RequestParam String email, @RequestParam String newPassword) {
+        try {
+            ForgotPasswordUseCase useCase = new ForgotPasswordUseCase(
+                    authRepository,
+                    passwordEncoder
+            );
+            String response = useCase.execute(email, newPassword);
+            ApiResponse apiResponse = new ApiResponse(true, response);
+            return ResponseEntity.ok(apiResponse);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to change new password, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to change new password, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
