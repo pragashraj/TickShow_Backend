@@ -7,6 +7,8 @@ import com.tickshow.backend.request.LoginRequest;
 import com.tickshow.backend.request.SignUpRequest;
 import com.tickshow.backend.response.ApiResponse;
 import com.tickshow.backend.response.AuthenticationResponse;
+import com.tickshow.backend.transport.EmailService;
+import com.tickshow.backend.transport.templates.PasswordResetTemplate;
 import com.tickshow.backend.usecase.LoginUseCase;
 import com.tickshow.backend.usecase.RegisterUseCase;
 import com.tickshow.backend.usecase.SendPasswordResetCodeUseCase;
@@ -33,6 +35,8 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final AuthRepository authRepository;
     private final UserRepository userRepository;
+    private final PasswordResetTemplate passwordResetTemplate;
+    private final EmailService emailService;
 
     @Value("${app.jwt.expiration}")
     private int expiration;
@@ -42,13 +46,17 @@ public class AuthController {
                           PasswordEncoder passwordEncoder,
                           JwtUtil jwtUtil,
                           AuthRepository authRepository,
-                          UserRepository userRepository
+                          UserRepository userRepository,
+                          PasswordResetTemplate passwordResetTemplate,
+                          EmailService emailService
     ) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.authRepository = authRepository;
         this.userRepository = userRepository;
+        this.passwordResetTemplate = passwordResetTemplate;
+        this.emailService = emailService;
     }
 
     @PostMapping("sign-up")
@@ -97,12 +105,14 @@ public class AuthController {
     public ResponseEntity<?> sendResetCode(@PathVariable String email) {
         try {
             SendPasswordResetCodeUseCase useCase = new SendPasswordResetCodeUseCase(
-                    authRepository
+                    authRepository,
+                    passwordResetTemplate,
+                    emailService
             );
             String response = useCase.execute(email);
             ApiResponse apiResponse = new ApiResponse(true, response);
             return ResponseEntity.ok(apiResponse);
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException | DispatcherException | ContentCreationException e) {
             log.error("Unable to send reset code, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
