@@ -9,6 +9,7 @@ import com.tickshow.backend.response.ApiResponse;
 import com.tickshow.backend.response.AuthenticationResponse;
 import com.tickshow.backend.transport.EmailService;
 import com.tickshow.backend.transport.templates.PasswordResetTemplate;
+import com.tickshow.backend.usecase.ConfirmResetCodeUseCase;
 import com.tickshow.backend.usecase.LoginUseCase;
 import com.tickshow.backend.usecase.RegisterUseCase;
 import com.tickshow.backend.usecase.SendPasswordResetCodeUseCase;
@@ -117,6 +118,22 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to send reset code, cause : {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("confirm-reset-code")
+    public ResponseEntity<?> confirmResetCode(@RequestParam String email, @RequestParam String code) {
+        try {
+            ConfirmResetCodeUseCase useCase = new ConfirmResetCodeUseCase(authRepository);
+            String response = useCase.execute(email, code);
+            ApiResponse apiResponse = new ApiResponse(true, response);
+            return ResponseEntity.ok(apiResponse);
+        } catch (EntityNotFoundException | MismatchException e) {
+            log.error("Unable to confirm reset code, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to confirm reset code, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
