@@ -1,8 +1,6 @@
 package com.tickshow.backend.controller;
 
-import com.tickshow.backend.exception.EntityNotFoundException;
-import com.tickshow.backend.exception.RegisterException;
-import com.tickshow.backend.exception.UserLoginException;
+import com.tickshow.backend.exception.*;
 import com.tickshow.backend.repository.AuthRepository;
 import com.tickshow.backend.repository.UserRepository;
 import com.tickshow.backend.request.LoginRequest;
@@ -11,6 +9,7 @@ import com.tickshow.backend.response.ApiResponse;
 import com.tickshow.backend.response.AuthenticationResponse;
 import com.tickshow.backend.usecase.LoginUseCase;
 import com.tickshow.backend.usecase.RegisterUseCase;
+import com.tickshow.backend.usecase.SendPasswordResetCodeUseCase;
 import com.tickshow.backend.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +89,24 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to login, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("send-reset-code/{email}")
+    public ResponseEntity<?> sendResetCode(@PathVariable String email) {
+        try {
+            SendPasswordResetCodeUseCase useCase = new SendPasswordResetCodeUseCase(
+                    authRepository
+            );
+            String response = useCase.execute(email);
+            ApiResponse apiResponse = new ApiResponse(true, response);
+            return ResponseEntity.ok(apiResponse);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to send reset code, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to send reset code, cause : {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }

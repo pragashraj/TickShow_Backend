@@ -23,6 +23,8 @@ public class UserAuthentication {
 
     private int loginAttempts;
 
+    private String passwordResetKey;
+
     @OneToOne
     private User user;
 }
