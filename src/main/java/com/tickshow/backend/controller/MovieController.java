@@ -30,6 +30,9 @@ public class MovieController {
     private final CastRepository castRepository;
     private final CrewRepository crewRepository;
     private final TheatreRepository theatreRepository;
+    private final BookingRepository bookingRepository;
+    private final TimeSlotRepository timeSlotRepository;
+    private final SeatRepository seatRepository;
 
     @Autowired
     public MovieController(MovieRepository movieRepository,
@@ -38,7 +41,10 @@ public class MovieController {
                            RateRepository rateRepository,
                            CastRepository castRepository,
                            CrewRepository crewRepository,
-                           TheatreRepository theatreRepository
+                           TheatreRepository theatreRepository,
+                           BookingRepository bookingRepository,
+                           TimeSlotRepository timeSlotRepository,
+                           SeatRepository seatRepository
     ) {
         this.movieRepository = movieRepository;
         this.genreRepository = genreRepository;
@@ -47,6 +53,9 @@ public class MovieController {
         this.castRepository = castRepository;
         this.crewRepository = crewRepository;
         this.theatreRepository = theatreRepository;
+        this.bookingRepository = bookingRepository;
+        this.timeSlotRepository = timeSlotRepository;
+        this.seatRepository = seatRepository;
     }
 
     @GetMapping("get-movies")
@@ -138,6 +147,9 @@ public class MovieController {
             BookTicketsUseCase useCase = new BookTicketsUseCase(
                     movieRepository,
                     theatreRepository,
+                    bookingRepository,
+                    timeSlotRepository,
+                    seatRepository,
                     request
             );
             String response = useCase.execute();
