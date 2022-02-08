@@ -16,4 +16,6 @@ public interface TheatreRepository extends JpaRepository<Theatre, Long> {
     List<String> findAllTheatreNamesByLocation(Location location);
 
     Page<Theatre> findAllByLocation(Location location, Pageable pageable);
+
+    Theatre findByName(String name);
 }

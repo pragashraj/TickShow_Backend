@@ -3,6 +3,7 @@ package com.tickshow.backend.controller;
 import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
 import com.tickshow.backend.repository.*;
+import com.tickshow.backend.request.BookTicketsRequest;
 import com.tickshow.backend.request.CreateNewMovieRequest;
 import com.tickshow.backend.request.FilterMoviesRequest;
 import com.tickshow.backend.request.SortMoviesRequest;
@@ -28,6 +29,7 @@ public class MovieController {
     private final RateRepository rateRepository;
     private final CastRepository castRepository;
     private final CrewRepository crewRepository;
+    private final TheatreRepository theatreRepository;
 
     @Autowired
     public MovieController(MovieRepository movieRepository,
@@ -35,7 +37,8 @@ public class MovieController {
                            ShowTypeRepository showTypeRepository,
                            RateRepository rateRepository,
                            CastRepository castRepository,
-                           CrewRepository crewRepository
+                           CrewRepository crewRepository,
+                           TheatreRepository theatreRepository
     ) {
         this.movieRepository = movieRepository;
         this.genreRepository = genreRepository;
@@ -43,6 +46,7 @@ public class MovieController {
         this.rateRepository = rateRepository;
         this.castRepository = castRepository;
         this.crewRepository = crewRepository;
+        this.theatreRepository = theatreRepository;
     }
 
     @GetMapping("get-movies")
@@ -124,6 +128,26 @@ public class MovieController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to create new movie, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("book-tickets")
+    public ResponseEntity<?> bookTickets(@RequestBody BookTicketsRequest request) {
+        try {
+            BookTicketsUseCase useCase = new BookTicketsUseCase(
+                    movieRepository,
+                    theatreRepository,
+                    request
+            );
+            String response = useCase.execute();
+            ApiResponse apiResponse = new ApiResponse(true, response);
+            return ResponseEntity.ok(apiResponse);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to book tickets, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to book tickets, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
