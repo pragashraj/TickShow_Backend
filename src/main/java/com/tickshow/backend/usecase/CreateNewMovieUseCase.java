@@ -1,15 +1,19 @@
 package com.tickshow.backend.usecase;
 
 import com.tickshow.backend.exception.EntityNotFoundException;
+import com.tickshow.backend.exception.FileStorageException;
 import com.tickshow.backend.model.coreEntity.CoreCast;
 import com.tickshow.backend.model.coreEntity.CoreCrew;
 import com.tickshow.backend.model.coreEntity.CoreGenre;
 import com.tickshow.backend.model.entity.*;
 import com.tickshow.backend.repository.*;
 import com.tickshow.backend.request.CreateNewMovieRequest;
+import com.tickshow.backend.utils.FileStorageService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +30,16 @@ public class CreateNewMovieUseCase {
     private final ShowTypeRepository showTypeRepository;
     private final CreateNewMovieRequest request;
 
-    public String execute() throws EntityNotFoundException {
+    public String execute(MultipartFile file) throws EntityNotFoundException, FileStorageException {
+        FileStorageService fileStorageService = new FileStorageService("movies");
+
+        String fileName = fileStorageService.storeFile(file);
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/uploads/movies/")
+                .path(fileName)
+                .toUriString();
+
         Rate rate = createRating();
         List<Genre> genres = getGenres();
         List<Cast> casts = createCasts();
@@ -45,6 +58,7 @@ public class CreateNewMovieUseCase {
                 .casts(casts)
                 .crews(crews)
                 .showType(showType)
+                .fileName(fileDownloadUri)
                 .build();
 
         movieRepository.save(movie);
