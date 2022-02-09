@@ -17,4 +17,5 @@ public class CoreTheatre {
     private String contact;
     private Rate rate;
     private CoreLocation location;
+    private byte[] src;
 }

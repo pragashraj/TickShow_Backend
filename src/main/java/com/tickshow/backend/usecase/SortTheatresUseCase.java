@@ -9,7 +9,9 @@ import com.tickshow.backend.model.pageableEntity.PageableCoreTheatre;
 import com.tickshow.backend.repository.LocationRepository;
 import com.tickshow.backend.repository.TheatreRepository;
 import com.tickshow.backend.request.SortTheatresRequest;
+import com.tickshow.backend.utils.FileStorageService;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -52,7 +54,8 @@ public class SortTheatresUseCase {
                 theatre.getAddress(),
                 theatre.getContact(),
                 theatre.getRate(),
-                convertToCoreEntity(theatre.getLocation())
+                convertToCoreEntity(theatre.getLocation()),
+                getImage(theatre.getFileName())
         );
     }
 
@@ -61,5 +64,14 @@ public class SortTheatresUseCase {
                 location.getId(),
                 location.getLocation()
         );
+    }
+
+    @SneakyThrows
+    private byte[] getImage(String fileName) {
+        if (fileName != null) {
+            FileStorageService fileStorageService = new FileStorageService("theatres");
+            return fileStorageService.convert(fileName);
+        }
+        return null;
     }
 }

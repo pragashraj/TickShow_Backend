@@ -23,6 +23,8 @@ public class Theatre {
 
     private String contact;
 
+    private String fileName;
+
     @OneToOne
     private Rate rate;
 
