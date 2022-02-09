@@ -25,4 +25,5 @@ public class CoreMovie {
     private List<Cast> casts;
     private List<Crew> crews;
     private ShowType showType;
+    private byte[] fileName;
 }

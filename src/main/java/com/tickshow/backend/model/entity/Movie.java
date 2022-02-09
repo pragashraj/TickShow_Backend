@@ -32,6 +32,8 @@ public class Movie {
 
     private String language;
 
+    private String fileName;
+
     @OneToOne
     private Rate rate;
 

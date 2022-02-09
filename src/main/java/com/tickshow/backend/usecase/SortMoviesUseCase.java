@@ -8,7 +8,9 @@ import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
 import com.tickshow.backend.repository.MovieRepository;
 import com.tickshow.backend.repository.ShowTypeRepository;
 import com.tickshow.backend.request.SortMoviesRequest;
+import com.tickshow.backend.utils.FileStorageService;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -58,7 +60,17 @@ public class SortMoviesUseCase {
                 movie.getGenres(),
                 movie.getCasts(),
                 movie.getCrews(),
-                movie.getShowType()
+                movie.getShowType(),
+                getImage(movie.getFileName())
         );
+    }
+
+    @SneakyThrows
+    private byte[] getImage(String fileName) {
+        if (fileName != null) {
+            FileStorageService fileStorageService = new FileStorageService("movies");
+            return fileStorageService.convert(fileName);
+        }
+        return null;
     }
 }
