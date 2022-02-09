@@ -18,4 +18,5 @@ public class CoreEvent {
     private String contact;
     private BigDecimal price;
     private CoreLocation location;
+    private byte[] src;
 }

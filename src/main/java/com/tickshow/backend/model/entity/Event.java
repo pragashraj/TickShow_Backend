@@ -26,6 +26,8 @@ public class Event {
 
     private BigDecimal price;
 
+    private String fileName;
+
     @OneToOne
     private Location location;
 

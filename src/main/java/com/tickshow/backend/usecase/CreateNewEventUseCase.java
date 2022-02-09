@@ -1,6 +1,7 @@
 package com.tickshow.backend.usecase;
 
 import com.tickshow.backend.exception.EntityNotFoundException;
+import com.tickshow.backend.exception.FileStorageException;
 import com.tickshow.backend.model.entity.Event;
 import com.tickshow.backend.model.entity.EventCategory;
 import com.tickshow.backend.model.entity.Location;
@@ -10,9 +11,12 @@ import com.tickshow.backend.repository.EventRepository;
 import com.tickshow.backend.repository.LocationRepository;
 import com.tickshow.backend.repository.ShowTypeRepository;
 import com.tickshow.backend.request.CreateNewEventRequest;
+import com.tickshow.backend.utils.FileStorageService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.math.BigDecimal;
 
@@ -26,7 +30,16 @@ public class CreateNewEventUseCase {
     private final ShowTypeRepository showTypeRepository;
     private final CreateNewEventRequest request;
 
-    public String execute() throws EntityNotFoundException {
+    public String execute(MultipartFile file) throws EntityNotFoundException, FileStorageException {
+        FileStorageService fileStorageService = new FileStorageService("events");
+
+        String fileName = fileStorageService.storeFile(file);
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/uploads/events/")
+                .path(fileName)
+                .toUriString();
+
         Location location = locationRepository.findByLocation(request.getLocation());
 
         if (location == null) {
@@ -56,6 +69,7 @@ public class CreateNewEventUseCase {
                 .location(location)
                 .eventCategory(eventCategory)
                 .showType(showType)
+                .fileName(fileDownloadUri)
                 .build();
 
         eventRepository.save(event);

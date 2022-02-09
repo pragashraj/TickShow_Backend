@@ -9,7 +9,9 @@ import com.tickshow.backend.model.pageableEntity.PageableCoreEvent;
 import com.tickshow.backend.repository.EventRepository;
 import com.tickshow.backend.repository.ShowTypeRepository;
 import com.tickshow.backend.request.SortEventsRequest;
+import com.tickshow.backend.utils.FileStorageService;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -43,7 +45,8 @@ public class SortEventsUseCase {
                 event.getAddress(),
                 event.getContact(),
                 event.getPrice(),
-                convertToCoreEntity(event.getLocation())
+                convertToCoreEntity(event.getLocation()),
+                getImage(event.getFileName())
         );
     }
 
@@ -52,5 +55,14 @@ public class SortEventsUseCase {
                 location.getId(),
                 location.getLocation()
         );
+    }
+
+    @SneakyThrows
+    private byte[] getImage(String fileName) {
+        if (fileName != null) {
+            FileStorageService fileStorageService = new FileStorageService("events");
+            return fileStorageService.convert(fileName);
+        }
+        return null;
     }
 }
