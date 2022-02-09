@@ -23,4 +23,6 @@ public class Cast {
     private String artist;
 
     private String characterName;
+
+    private String fileName;
 }

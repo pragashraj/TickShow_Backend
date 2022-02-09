@@ -23,4 +23,6 @@ public class Crew {
     private String name;
 
     private String role;
+
+    private String fileName;
 }

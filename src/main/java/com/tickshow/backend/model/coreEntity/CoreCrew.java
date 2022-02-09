@@ -13,4 +13,5 @@ public class CoreCrew {
     private Long id;
     private String name;
     private String role;
+    private byte[] src;
 }

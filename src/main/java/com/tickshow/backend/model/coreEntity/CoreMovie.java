@@ -22,8 +22,8 @@ public class CoreMovie {
     private String experience;
     private Rate rate;
     private List<Genre> genres;
-    private List<Cast> casts;
-    private List<Crew> crews;
+    private List<CoreCast> casts;
+    private List<CoreCrew> crews;
     private ShowType showType;
     private byte[] src;
 }

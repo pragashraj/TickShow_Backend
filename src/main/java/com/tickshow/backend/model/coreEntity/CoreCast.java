@@ -13,4 +13,5 @@ public class CoreCast {
     private Long id;
     private String artist;
     private String characterName;
+    private byte[] src;
 }
