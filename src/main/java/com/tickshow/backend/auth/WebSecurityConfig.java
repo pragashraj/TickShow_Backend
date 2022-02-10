@@ -64,7 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/movies/**",
                         "/api/theatres/**",
                         "/api/events/**",
-                        "/api/contact/**"
+                        "/api/contact/send-message"
                 ).permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
