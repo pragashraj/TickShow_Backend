@@ -1,33 +1,22 @@
-package com.tickshow.backend.model.entity;
+package com.tickshow.backend.model.coreEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Builder
-public class Contact {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class CoreContact {
     private Long id;
-
     private String name;
-
     private String email;
-
     private String subject;
-
     private LocalDateTime dateTime;
-
-    @Lob
     private String message;
-
     private boolean isReplied;
 }

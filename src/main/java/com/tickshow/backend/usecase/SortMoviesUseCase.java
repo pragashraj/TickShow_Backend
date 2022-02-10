@@ -46,9 +46,7 @@ public class SortMoviesUseCase {
         ));
 
         return new PageableCoreMovie(
-                moviePage.get()
-                        .map(this::convertToCoreEntity)
-                        .collect(Collectors.toList()),
+                moviePage.get().map(this::convertToCoreEntity).collect(Collectors.toList()),
                 moviePage.getTotalPages(),
                 moviePage.getNumber()
         );

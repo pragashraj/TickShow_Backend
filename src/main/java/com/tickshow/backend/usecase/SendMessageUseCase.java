@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 public class SendMessageUseCase {
     private static final Logger log = LoggerFactory.getLogger(SendMessageUseCase.class);
@@ -19,6 +21,7 @@ public class SendMessageUseCase {
                 .name(request.getName())
                 .email(request.getEmail())
                 .subject(request.getSubject())
+                .dateTime(LocalDateTime.now())
                 .message(request.getMessage())
                 .isReplied(false)
                 .build();
