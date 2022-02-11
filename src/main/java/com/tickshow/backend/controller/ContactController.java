@@ -4,6 +4,7 @@ import com.tickshow.backend.model.pageableEntity.PageableCoreContact;
 import com.tickshow.backend.repository.ContactRepository;
 import com.tickshow.backend.request.SendMessageRequest;
 import com.tickshow.backend.response.ApiResponse;
+import com.tickshow.backend.usecase.GetMessagesByIsRepliedUseCase;
 import com.tickshow.backend.usecase.GetMessagesUseCase;
 import com.tickshow.backend.usecase.SendMessageUseCase;
 import org.slf4j.Logger;
@@ -48,6 +49,18 @@ public class ContactController {
             return ResponseEntity.ok(pageableCoreContact);
         } catch (Exception e) {
             log.error("Unable to get user messages, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @GetMapping("get-messages-by-isReplied")
+    public ResponseEntity<?> getMessagesByIsReplied(@RequestParam boolean isReplied, @RequestParam int page) {
+        try {
+            GetMessagesByIsRepliedUseCase useCase = new GetMessagesByIsRepliedUseCase(contactRepository);
+            PageableCoreContact pageableCoreContact = useCase.execute(isReplied, page);
+            return ResponseEntity.ok(pageableCoreContact);
+        } catch (Exception e) {
+            log.error("Unable to get user messages by isReplied, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
