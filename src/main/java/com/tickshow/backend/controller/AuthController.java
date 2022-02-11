@@ -1,8 +1,10 @@
 package com.tickshow.backend.controller;
 
 import com.tickshow.backend.exception.*;
+import com.tickshow.backend.repository.AdminRepository;
 import com.tickshow.backend.repository.AuthRepository;
 import com.tickshow.backend.repository.UserRepository;
+import com.tickshow.backend.request.LoginAsAdminRequest;
 import com.tickshow.backend.request.LoginRequest;
 import com.tickshow.backend.request.SignUpRequest;
 import com.tickshow.backend.response.ApiResponse;
@@ -28,11 +30,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
+    private final AuthRepository authRepository;
+    private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final AuthRepository authRepository;
-    private final UserRepository userRepository;
     private final PasswordResetTemplate passwordResetTemplate;
     private final EmailService emailService;
 
@@ -40,11 +43,12 @@ public class AuthController {
     private int expiration;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager,
+    public AuthController(AuthRepository authRepository,
+                          UserRepository userRepository,
+                          AdminRepository adminRepository,
+                          AuthenticationManager authenticationManager,
                           PasswordEncoder passwordEncoder,
                           JwtUtil jwtUtil,
-                          AuthRepository authRepository,
-                          UserRepository userRepository,
                           PasswordResetTemplate passwordResetTemplate,
                           EmailService emailService
     ) {
@@ -55,6 +59,7 @@ public class AuthController {
         this.userRepository = userRepository;
         this.passwordResetTemplate = passwordResetTemplate;
         this.emailService = emailService;
+        this.adminRepository = adminRepository;
     }
 
     @PostMapping("sign-up")
@@ -150,6 +155,27 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to change new password, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("admin-sign-in")
+    public ResponseEntity<?> loginAsAdmin(@RequestBody LoginAsAdminRequest request) {
+        try {
+            LoginAsAdminUseCase useCase = new LoginAsAdminUseCase(
+                    authRepository,
+                    adminRepository,
+                    jwtUtil,
+                    authenticationManager,
+                    request
+            );
+            AuthenticationResponse response = useCase.execute(expiration);
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException | UserLoginException e) {
+            log.error("Unable to login, incorrect email or password, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to login, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }

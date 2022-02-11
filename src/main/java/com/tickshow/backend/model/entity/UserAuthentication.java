@@ -27,4 +27,7 @@ public class UserAuthentication {
 
     @OneToOne
     private User user;
+
+    @OneToOne
+    private Admin admin;
 }
