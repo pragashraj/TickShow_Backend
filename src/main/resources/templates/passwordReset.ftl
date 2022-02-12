@@ -10,31 +10,38 @@
         .root {
             overflow: hidden;
         }
+
         .header {
             color: #ffffff;
             text-transform: uppercase;
             background-color: #DC7633;
         }
+
         .container {
             overflow: hidden;
             padding: 15px 10px;
         }
+
         .row {
             margin-right: 15px;
             margin-left: 15px;
         }
+
         .dark-stroke {
             border-bottom: 2px solid #F8F9F9;
             width: 80px;
         }
+
         .content {
             background-color: #ECF0F1;
         }
+
         .content-td {
             font-size: 0;
             padding: 10px 25px;
             word-break: break-word;
         }
+
         .content-td > div {
             font-family: Poppins, Arial, sans-serif;
             font-size: 14px;
@@ -42,6 +49,7 @@
             text-align: left;
             color: #000000;
         }
+
         .content-td-key {
             font-family: Poppins, Arial, sans-serif;
             font-size: 30px !important;
@@ -50,15 +58,18 @@
             text-align: center !important;
             color: #DC7633 !important;
         }
+
         .footer {
             color: #ffffff;
             background-color: #DC7633;
         }
+
         .footer-td {
             font-size: 0;
             padding: 10px 25px;
             word-break: break-word;
         }
+
         .footer-td > div {
             font-family: Poppins, Helvetica, Arial, sans-serif;
             font-size: 13px;
@@ -66,9 +77,11 @@
             text-align: left;
             color: #ffffff;
         }
+
         .footer-td > div > span {
             color: #ffffff;
         }
+
         .footer-social > a > img {
             height: 35px;
         }
@@ -111,7 +124,7 @@
             </tr>
             <tr>
                 <td class="content-td">
-                    <div>Sincerely,<br/>Your friendly GiftBook</div>
+                    <div>Sincerely,<br/>Your friendly TickShow</div>
                 </td>
             </tr>
         </table>
