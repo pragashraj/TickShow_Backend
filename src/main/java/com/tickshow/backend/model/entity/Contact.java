@@ -30,4 +30,6 @@ public class Contact {
     private String message;
 
     private boolean isReplied;
+
+    private String reply;
 }

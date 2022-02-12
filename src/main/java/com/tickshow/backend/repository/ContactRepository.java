@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Long> {
     Page<Contact> findAllByRepliedOrderByDateTime(boolean isReplied, Pageable pageable);
+
+    Contact findByIdAndName(Long id, String name);
 }
