@@ -2,14 +2,18 @@ package com.tickshow.backend.controller;
 
 import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.exception.FileStorageException;
+import com.tickshow.backend.model.pageableEntity.PageableCoreContact;
 import com.tickshow.backend.repository.*;
 import com.tickshow.backend.request.CreateNewEventRequest;
 import com.tickshow.backend.request.CreateNewMovieRequest;
 import com.tickshow.backend.request.CreateNewTheatreRequest;
 import com.tickshow.backend.response.ApiResponse;
+import com.tickshow.backend.transport.EmailService;
+import com.tickshow.backend.transport.templates.MessageResponseTemplate;
 import com.tickshow.backend.usecase.CreateNewEventUseCase;
 import com.tickshow.backend.usecase.CreateNewMovieUseCase;
 import com.tickshow.backend.usecase.CreateNewTheatreUseCase;
+import com.tickshow.backend.usecase.GetMessagesByIsRepliedUseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,9 @@ public class adminController {
     private final LocationRepository locationRepository;
     private final EventCategoryRepository eventCategoryRepository;
     private final EventRepository eventRepository;
+    private final ContactRepository contactRepository;
+    private final MessageResponseTemplate messageResponseTemplate;
+    private final EmailService emailService;
 
     @Autowired
     public adminController(MovieRepository movieRepository,
@@ -47,7 +54,10 @@ public class adminController {
                            TheatreRepository theatreRepository,
                            LocationRepository locationRepository,
                            EventCategoryRepository eventCategoryRepository,
-                           EventRepository eventRepository
+                           EventRepository eventRepository,
+                           ContactRepository contactRepository,
+                           MessageResponseTemplate messageResponseTemplate,
+                           EmailService emailService
     ) {
         this.movieRepository = movieRepository;
         this.genreRepository = genreRepository;
@@ -59,6 +69,9 @@ public class adminController {
         this.locationRepository = locationRepository;
         this.eventCategoryRepository = eventCategoryRepository;
         this.eventRepository = eventRepository;
+        this.contactRepository = contactRepository;
+        this.messageResponseTemplate = messageResponseTemplate;
+        this.emailService = emailService;
     }
 
 
@@ -128,6 +141,18 @@ public class adminController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to create a new event, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @GetMapping("get-messages-by-isReplied")
+    public ResponseEntity<?> getMessagesByIsReplied(@RequestParam boolean isReplied, @RequestParam int page) {
+        try {
+            GetMessagesByIsRepliedUseCase useCase = new GetMessagesByIsRepliedUseCase(contactRepository);
+            PageableCoreContact pageableCoreContact = useCase.execute(isReplied, page);
+            return ResponseEntity.ok(pageableCoreContact);
+        } catch (Exception e) {
+            log.error("Unable to get user messages by isReplied, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
