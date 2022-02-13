@@ -10,10 +10,7 @@ import com.tickshow.backend.request.CreateNewTheatreRequest;
 import com.tickshow.backend.response.ApiResponse;
 import com.tickshow.backend.transport.EmailService;
 import com.tickshow.backend.transport.templates.MessageResponseTemplate;
-import com.tickshow.backend.usecase.CreateNewEventUseCase;
-import com.tickshow.backend.usecase.CreateNewMovieUseCase;
-import com.tickshow.backend.usecase.CreateNewTheatreUseCase;
-import com.tickshow.backend.usecase.GetMessagesByIsRepliedUseCase;
+import com.tickshow.backend.usecase.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +138,18 @@ public class adminController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
             log.error("Unable to create a new event, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @GetMapping("get-messages/{page}")
+    public ResponseEntity<?> getMessages(@PathVariable int page) {
+        try {
+            GetMessagesUseCase useCase = new GetMessagesUseCase(contactRepository);
+            PageableCoreContact pageableCoreContact = useCase.execute(page);
+            return ResponseEntity.ok(pageableCoreContact);
+        } catch (Exception e) {
+            log.error("Unable to get user messages, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
