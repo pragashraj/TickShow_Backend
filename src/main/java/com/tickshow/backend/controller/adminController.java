@@ -5,6 +5,7 @@ import com.tickshow.backend.exception.DispatcherException;
 import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.exception.FileStorageException;
 import com.tickshow.backend.model.pageableEntity.PageableCoreContact;
+import com.tickshow.backend.model.pageableEntity.PageableCoreEvent;
 import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
 import com.tickshow.backend.repository.*;
 import com.tickshow.backend.request.*;
@@ -211,6 +212,18 @@ public class adminController {
             return ResponseEntity.ok(pageableCoreMovie);
         } catch (Exception e) {
             log.error("Unable to search movies, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @GetMapping("search-event")
+    public ResponseEntity<?> searchEvent(@RequestParam String name, @RequestParam int page) {
+        try {
+            SearchEventUseCase useCase = new SearchEventUseCase(eventRepository);
+            PageableCoreEvent pageableCoreEvent = useCase.execute(name, page);
+            return ResponseEntity.ok(pageableCoreEvent);
+        } catch (Exception e) {
+            log.error("Unable to search event, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }

@@ -15,4 +15,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllByEventCategoryIn(List<EventCategory> categories, Pageable pageable);
 
     Page<Event> findAllByShowType(ShowType type, Pageable pageable);
+
+    Page<Event> findAllByNameLike(String name, Pageable pageable);
 }
