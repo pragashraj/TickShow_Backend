@@ -255,4 +255,19 @@ public class adminController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
+
+    @PostMapping("delete-event")
+    public ResponseEntity<?> deleteEvents(@RequestBody DeleteDataRequest request) {
+        try {
+            DeleteEventsUseCase useCase = new DeleteEventsUseCase(eventRepository, request);
+            PageableCoreEvent pageableCoreEvent = useCase.execute();
+            return ResponseEntity.ok(pageableCoreEvent);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to delete events, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to delete events, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
 }
