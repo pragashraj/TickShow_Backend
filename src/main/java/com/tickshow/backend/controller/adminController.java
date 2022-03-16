@@ -270,4 +270,19 @@ public class adminController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
+
+    @PostMapping("delete-theatre")
+    public ResponseEntity<?> deleteTheatres(@RequestBody DeleteDataRequest request) {
+        try {
+            DeleteTheatresUseCase useCase = new DeleteTheatresUseCase(theatreRepository, request);
+            PageableCoreTheatre pageableCoreTheatre = useCase.execute();
+            return ResponseEntity.ok(pageableCoreTheatre);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to delete theatres, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to delete theatres, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
 }
