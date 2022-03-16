@@ -35,7 +35,7 @@ public class DeleteMoviesUseCase {
             Optional<Movie> movieOptional = movieRepository.findById(id);
 
             if (!movieOptional.isPresent()) {
-                log.error("Movie not found");
+                log.error("Movie not found for id: {}", id);
                 throw new EntityNotFoundException("Movie not found");
             }
 

@@ -31,7 +31,7 @@ public class DeleteEventsUseCase {
             Optional<Event> eventOptional = eventRepository.findById(id);
 
             if (!eventOptional.isPresent()) {
-                log.error("Event not found");
+                log.error("Event not found for id: {}", id);
                 throw new EntityNotFoundException("Event not found");
             }
 
