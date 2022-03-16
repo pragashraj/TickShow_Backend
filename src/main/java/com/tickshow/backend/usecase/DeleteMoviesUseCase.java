@@ -1,5 +1,6 @@
 package com.tickshow.backend.usecase;
 
+import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.model.coreEntity.CoreCast;
 import com.tickshow.backend.model.coreEntity.CoreCrew;
 import com.tickshow.backend.model.coreEntity.CoreMovie;
@@ -8,27 +9,45 @@ import com.tickshow.backend.model.entity.Crew;
 import com.tickshow.backend.model.entity.Movie;
 import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
 import com.tickshow.backend.repository.MovieRepository;
+import com.tickshow.backend.request.DeleteDataRequest;
 import com.tickshow.backend.utils.FileStorageService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class SearchMovieUseCase {
-    private final MovieRepository movieRepository;
+public class DeleteMoviesUseCase {
+    private static final Logger log = LoggerFactory.getLogger(DeleteMoviesUseCase.class);
 
-    public PageableCoreMovie execute(String name, int page) {
-        Page<Movie> moviePage = movieRepository.findAllByNameLike(name, PageRequest.of(page, 10));
+    private final MovieRepository movieRepository;
+    private final DeleteDataRequest request;
+
+    public PageableCoreMovie execute() throws EntityNotFoundException {
+        for (Long id : request.getIds()) {
+            Optional<Movie> movieOptional = movieRepository.findById(id);
+
+            if (!movieOptional.isPresent()) {
+                log.error("Movie not found");
+                throw new EntityNotFoundException("Movie not found");
+            }
+
+            Movie movie = movieOptional.get();
+
+            movieRepository.delete(movie);
+        }
+
+        Page<Movie> moviePage = movieRepository.findAll(PageRequest.of(0, 10));
 
         return new PageableCoreMovie(
-                moviePage.get()
-                        .map(this::convertToCoreEntity)
-                        .collect(Collectors.toList()),
+                moviePage.get().map(this::convertToCoreEntity).collect(Collectors.toList()),
                 moviePage.getTotalPages(),
                 moviePage.getNumber()
         );

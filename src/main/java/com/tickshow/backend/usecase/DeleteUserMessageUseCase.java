@@ -5,7 +5,7 @@ import com.tickshow.backend.model.coreEntity.CoreContact;
 import com.tickshow.backend.model.entity.Contact;
 import com.tickshow.backend.model.pageableEntity.PageableCoreContact;
 import com.tickshow.backend.repository.ContactRepository;
-import com.tickshow.backend.request.DeleteUserMessagesRequest;
+import com.tickshow.backend.request.DeleteDataRequest;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class DeleteUserMessageUseCase {
     private static final Logger log = LoggerFactory.getLogger(DeleteUserMessageUseCase.class);
 
     private final ContactRepository contactRepository;
-    private final DeleteUserMessagesRequest request;
+    private final DeleteDataRequest request;
 
     public PageableCoreContact execute() throws EntityNotFoundException {
         for (Long id : request.getIds()) {

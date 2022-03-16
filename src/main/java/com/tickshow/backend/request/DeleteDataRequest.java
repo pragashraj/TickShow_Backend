@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeleteUserMessagesRequest {
+public class DeleteDataRequest {
     private Long[] ids;
 }

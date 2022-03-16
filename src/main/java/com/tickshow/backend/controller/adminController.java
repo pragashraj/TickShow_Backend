@@ -191,7 +191,7 @@ public class adminController {
     }
 
     @PostMapping("delete-user-messages")
-    public ResponseEntity<?> deleteUserMessages(@RequestBody DeleteUserMessagesRequest request) {
+    public ResponseEntity<?> deleteUserMessages(@RequestBody DeleteDataRequest request) {
         try {
             DeleteUserMessageUseCase useCase = new DeleteUserMessageUseCase(contactRepository, request);
             PageableCoreContact pageableCoreContact = useCase.execute();
@@ -237,6 +237,21 @@ public class adminController {
             return ResponseEntity.ok(pageableCoreTheatre);
         } catch (Exception e) {
             log.error("Unable to search theatre, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @PostMapping("delete-movie")
+    public ResponseEntity<?> deleteMovies(@RequestBody DeleteDataRequest request) {
+        try {
+            DeleteMoviesUseCase useCase = new DeleteMoviesUseCase(movieRepository, request);
+            PageableCoreMovie pageableCoreMovie = useCase.execute();
+            return ResponseEntity.ok(pageableCoreMovie);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to delete movies, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to delete movies, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
