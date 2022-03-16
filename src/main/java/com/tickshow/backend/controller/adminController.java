@@ -6,10 +6,7 @@ import com.tickshow.backend.exception.EntityNotFoundException;
 import com.tickshow.backend.exception.FileStorageException;
 import com.tickshow.backend.model.pageableEntity.PageableCoreContact;
 import com.tickshow.backend.repository.*;
-import com.tickshow.backend.request.CreateNewEventRequest;
-import com.tickshow.backend.request.CreateNewMovieRequest;
-import com.tickshow.backend.request.CreateNewTheatreRequest;
-import com.tickshow.backend.request.ResponseToMessageRequest;
+import com.tickshow.backend.request.*;
 import com.tickshow.backend.response.ApiResponse;
 import com.tickshow.backend.transport.EmailService;
 import com.tickshow.backend.transport.templates.MessageResponseTemplate;
@@ -190,11 +187,11 @@ public class adminController {
         }
     }
 
-    @GetMapping("delete-user-message/{id}")
-    public ResponseEntity<?> deleteUserMessage(@PathVariable long id) {
+    @PostMapping("delete-user-messages")
+    public ResponseEntity<?> deleteUserMessages(@RequestBody DeleteUserMessagesRequest request) {
         try {
-            DeleteUserMessageUseCase useCase = new DeleteUserMessageUseCase(contactRepository);
-            PageableCoreContact pageableCoreContact = useCase.execute(id);
+            DeleteUserMessageUseCase useCase = new DeleteUserMessageUseCase(contactRepository, request);
+            PageableCoreContact pageableCoreContact = useCase.execute();
             return ResponseEntity.ok(pageableCoreContact);
         } catch (EntityNotFoundException e) {
             log.error("Unable to delete user message, cause: {}", e.getMessage());
