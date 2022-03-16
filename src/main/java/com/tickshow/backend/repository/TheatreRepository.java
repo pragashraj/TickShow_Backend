@@ -18,4 +18,6 @@ public interface TheatreRepository extends JpaRepository<Theatre, Long> {
     Page<Theatre> findAllByLocation(Location location, Pageable pageable);
 
     Theatre findByName(String name);
+
+    Page<Theatre> findAllByNameLike(String name, Pageable pageable);
 }

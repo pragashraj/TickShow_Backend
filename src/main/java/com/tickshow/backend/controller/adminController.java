@@ -7,6 +7,7 @@ import com.tickshow.backend.exception.FileStorageException;
 import com.tickshow.backend.model.pageableEntity.PageableCoreContact;
 import com.tickshow.backend.model.pageableEntity.PageableCoreEvent;
 import com.tickshow.backend.model.pageableEntity.PageableCoreMovie;
+import com.tickshow.backend.model.pageableEntity.PageableCoreTheatre;
 import com.tickshow.backend.repository.*;
 import com.tickshow.backend.request.*;
 import com.tickshow.backend.response.ApiResponse;
@@ -224,6 +225,18 @@ public class adminController {
             return ResponseEntity.ok(pageableCoreEvent);
         } catch (Exception e) {
             log.error("Unable to search event, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
+
+    @GetMapping("search-theatre")
+    public ResponseEntity<?> searchTheatre(@RequestParam String name, @RequestParam int page) {
+        try {
+            SearchTheatreUseCase useCase = new SearchTheatreUseCase(theatreRepository);
+            PageableCoreTheatre pageableCoreTheatre = useCase.execute(name, page);
+            return ResponseEntity.ok(pageableCoreTheatre);
+        } catch (Exception e) {
+            log.error("Unable to search theatre, cause: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
