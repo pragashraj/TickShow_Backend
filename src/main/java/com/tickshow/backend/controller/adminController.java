@@ -300,4 +300,19 @@ public class adminController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
+
+    @PostMapping("update-theatre")
+    public ResponseEntity<?> updateTheatre(@RequestBody UpdateTheatreRequest request) {
+        try {
+            UpdateTheatreUseCase useCase = new UpdateTheatreUseCase(theatreRepository, locationRepository, request);
+            PageableCoreTheatre pageableCoreTheatre = useCase.execute();
+            return ResponseEntity.ok(pageableCoreTheatre);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to update a theatre, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to update a theatre, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
 }
