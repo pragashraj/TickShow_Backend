@@ -285,4 +285,19 @@ public class adminController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
+
+    @PostMapping("update-event")
+    public ResponseEntity<?> updateEvent(@RequestBody UpdateEventRequest request) {
+        try {
+            UpdateEventUseCase useCase = new UpdateEventUseCase(eventRepository, locationRepository, request);
+            PageableCoreEvent pageableCoreEvent = useCase.execute();
+            return ResponseEntity.ok(pageableCoreEvent);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to update an event, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to update an event, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
 }
