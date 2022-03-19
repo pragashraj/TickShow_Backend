@@ -315,4 +315,19 @@ public class adminController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
         }
     }
+
+    @PostMapping("update-movie")
+    public ResponseEntity<?> updateMovie(@RequestBody UpdateMovieRequest request) {
+        try {
+            UpdateMovieUseCase useCase = new UpdateMovieUseCase(movieRepository, request);
+            PageableCoreMovie pageableCoreMovie = useCase.execute();
+            return ResponseEntity.ok(pageableCoreMovie);
+        } catch (EntityNotFoundException e) {
+            log.error("Unable to update a movie, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (Exception e) {
+            log.error("Unable to update a movie, cause: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "server error, please try again");
+        }
+    }
 }
